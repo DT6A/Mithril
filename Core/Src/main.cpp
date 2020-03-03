@@ -102,7 +102,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  HAL_UART_Transmit(&huart2, (uint8_t *)"KEKW", 4, 100);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
