@@ -18,27 +18,27 @@ mthl::MCU6050::MCU6050(I2C_HandleTypeDef *handle) : i2c_handle(handle)
   // Try to get signature
   HAL_I2C_Mem_Read (i2c_handle, MPU6050_ADDR, WHO_AM_I_REG, 1, &check, 1, 1000);
   // TODO Error handling
-		
+
   if (check == SIGNATURE)  // Check device signature
   {
     // Wake the sensor up
     Data = 0;
-	HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, PWR_MGMT_1_REG, 1, &Data, 1, 1000);
+    HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, PWR_MGMT_1_REG, 1, &Data, 1, 1000);
 
-	// Set DATA RATE of 1KHz
-	Data = 0x07;
-	HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, SMPLRT_DIV_REG, 1, &Data, 1, 1000);
+    // Set DATA RATE of 1KHz
+    Data = 0x07;
+    HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, SMPLRT_DIV_REG, 1, &Data, 1, 1000);
 
-	// Set accelerometer configuration +- 2g
-	Data = 0x00;
-	HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, ACCEL_CONFIG_REG, 1, &Data, 1, 1000);
+    // Set accelerometer configuration +- 2g
+    Data = 0x00;
+    HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, ACCEL_CONFIG_REG, 1, &Data, 1, 1000);
 
-	// Set gyroscope configuration +- 250 d/s
-	Data = 0x00;
-	HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, GYRO_CONFIG_REG, 1, &Data, 1, 1000);
+    // Set gyroscope configuration +- 250 d/s
+    Data = 0x00;
+    HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, GYRO_CONFIG_REG, 1, &Data, 1, 1000);
 
-	// Calibrate gyroscope
-	calibrate(3000);
+    // Calibrate gyroscope
+    calibrate(3000);
   }
 } // End of 'MCU6050' constructor
 
