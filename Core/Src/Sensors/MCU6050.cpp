@@ -7,7 +7,7 @@
  * Last change : 03.03.2020
  ******************************/
 
-#include "MCU6050.h"
+#include "Sensors/MCU6050.h"
 
 /* 'MCU6050' class constructor */
 mthl::MCU6050::MCU6050(I2C_HandleTypeDef *handle) : i2c_handle(handle)

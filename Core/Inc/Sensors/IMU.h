@@ -10,7 +10,7 @@
 #ifndef __IMU_H_
 #define __IMU_H_
 
-#include "vec.h"
+#include "math/vec.h"
 
 /* Mithril namespace */
 namespace mthl
