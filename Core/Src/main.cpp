@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Sensors/MCU6050.h"
+#include "UART_IO.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,7 +103,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_UART_Transmit(&huart2, (uint8_t *)"KEKW", 4, 100);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
