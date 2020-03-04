@@ -4,7 +4,7 @@
  *               IMU sensors interface
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 03.03.2020
+ * Last change : 04.03.2020
  ******************************/
 
 #ifndef __IMU_H_
@@ -37,7 +37,7 @@ namespace mthl
     /* Read data from gyroscope
      *
      * Arguments:
-     *   math::vec &v -- array to store data
+     *   math::vec &v -- vector to store data
      *
      * Returns:
      *   None.

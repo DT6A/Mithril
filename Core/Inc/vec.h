@@ -4,7 +4,7 @@
  *               Math vector
  * Author      : Tarasov Denis
  * Create date : 03.03.2020
- * Last change : 03.03.2020
+ * Last change : 04.03.2020
  ******************************/
 
 #ifndef __VEC_H_
@@ -57,9 +57,9 @@ namespace mthl
 
       /* Vector copy constructor.
        * Arguments:
-       *   vec V -- vector to copy
+       *   vec v -- vector to copy
        */
-      vec(const vec<Type> &V) : x(V.x), y(V.y), z(V.z)
+      vec(const vec<Type> &v) : x(v.x), y(v.y), z(v.z)
       {
 
       } // End of 'vec' constructor
@@ -88,7 +88,7 @@ namespace mthl
        */
       Type & operator[](int32_t i)
       {
-        return GetField(i);
+        return getField(i);
       } // End of 'operator[]' function
 
       /* operator! overload function.
@@ -104,88 +104,88 @@ namespace mthl
 
       /* operator& overload function.
        * Arguments:
-       *   vec V -- vector to multiply with
+       *   vec v -- vector to multiply with
        *
        * Returns:
        *   Dot production of two vectors.
        */
-      Type operator&(const vec<Type> & V) const
+      Type operator&(const vec<Type> & v) const
       {
-        return (x * V.x + y * V.y + z * V.z);
+        return (x * v.x + y * v.y + z * v.z);
       } // End of 'operator&' function
 
       /* operator% overload function.
        * Arguments:
-       *  vec V - vector to multiply with
+       *  vec v - vector to multiply with
        *
        * Returns:
        *   Cross production of two vectors.
        */
-      vec<Type> operator%(const vec<Type> & V) const
+      vec<Type> operator%(const vec<Type> & v) const
       {
-        return vec<Type>(y * V.z - z * V.y, -(x * V.z - z * V.x), x * V.y - y * V.x);
+        return vec<Type>(y * v.z - z * v.y, -(x * v.z - z * v.x), x * v.y - y * v.x);
       } // End of 'operator%' function
 
       /* operator* overload function.
        * Arguments:
-       *   vec V -- vector to multiply with
+       *   vec v -- vector to multiply with
        *
        * Returns:
        *   Component production of two vectors.
        */
-      vec<Type> operator*(const vec<Type> &V) const
+      vec<Type> operator*(const vec<Type> &v) const
       {
-        return vec<Type>(x * V.x, y * V.y, z * V.z);
+        return vec<Type>(x * v.x, y * v.y, z * v.z);
       } // End of 'operator *' function
 
       /* operator* overload function.
        * Arguments:
-       *   Type V -- number to multiply with
+       *   Type v -- number to multiply with
        *
        * Returns:
        *   Production of vector and number.
        */
-      vec<Type> operator*(const Type &C) const
+      vec<Type> operator*(const Type &c) const
       {
-        return vec<Type>(x * C, y * C, z * C);
+        return vec<Type>(x * c, y * c, z * c);
       } // End of 'operator*' function
 
       /* operator+ overload function.
        * Arguments:
-       *   vec V -- vector to add
+       *   vec v -- vector to add
        *
        * Returns:
        *   Sum of vectors
        */
-      vec<Type> operator+(const vec<Type> & V) const
+      vec<Type> operator+(const vec<Type> & v) const
       {
-        return vec<Type>(x + V.x, y + V.y, z + V.z);
+        return vec<Type>(x + v.x, y + v.y, z + v.z);
       } // End of 'operator+' function
 
       /* operator/ overload function.
        * Arguments:
-       *   Type C -- number to devide
+       *   Type c -- number to devide
        *
        * Returns:
        *   Divided vector
        */
-      vec<Type> operator/(const Type &C) const
+      vec<Type> operator/(const Type &c) const
       {
-        if (C == 0)
+        if (c == 0)
           return vec<Type>();
-        return vec<Type>(x / C, y / C, z / C);
+        return vec<Type>(x / c, y / c, z / c);
       } // End of 'operator/' function
 
       /* operator- overload function.
        * Arguments:
-       *   vec V -- vector to substract
+       *   vec v -- vector to substract
        *
        * Returns:
        *   Result of substraction
        */
-      vec<Type> operator-(const vec<Type> &V) const
+      vec<Type> operator-(const vec<Type> &v) const
       {
-        return vec<Type>(x - V.x, y - V.y, z - V.z);
+        return vec<Type>(x - v.x, y - v.y, z - v.z);
       } // End of 'operator-' function
 
       /* operator- overload function.
@@ -201,64 +201,64 @@ namespace mthl
 
       /* operator*= overload function.
        * Arguments:
-       *   Type C -- number to multiply with
+       *   Type c -- number to multiply with
        *
        * Returns:
        *   Result of multiplication
        */
-      vec<Type> & operator*=(const Type &C)
+      vec<Type> & operator*=(const Type &c)
       {
-        x *= C;
-        y *= C;
-        z *= C;
+        x *= c;
+        y *= c;
+        z *= c;
 
         return *this;
       } // End of 'operator*=' function
 
       /* operator+ overload function.
        * Arguments:
-       *   vec V -- vector to add
+       *   vec v -- vector to add
        *
        * Returns:
        *   Result of sum
        */
-      vec<Type> & operator+=(const vec<Type> &V)
+      vec<Type> & operator+=(const vec<Type> &v)
       {
-        x += V.x;
-        y += V.y;
-        z += V.z;
+        x += v.x;
+        y += v.y;
+        z += v.z;
 
         return *this;
       } // End of 'operator+=' function
 
       /* operator- overload function.
        * Arguments:
-       *   vec V -- vector to substract
+       *   vec v -- vector to substract
        *
        * Returns:
        *   Result of substraction
        */
-      vec<Type> & operator-=(const vec<Type> &V)
+      vec<Type> & operator-=(const vec<Type> &v)
       {
-        x -= V.x;
-        y -= V.y;
-        z -= V.z;
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
 
         return *this;
       } // End of 'operator-=' function
 
       /* operator/= overload function.
        * Arguments:
-       *   Type C -- number to devide on
+       *   Type c -- number to devide on
        *
        * Returns:
        *   Result of division
        */
-      vec<Type> & operator/=(const Type &C)
+      vec<Type> & operator/=(const Type &c)
       {
-        x /= C;
-        y /= C;
-        z /= C;
+        x /= c;
+        y /= c;
+        z /= c;
 
         return *this;
       } // End of 'operator/=' function
@@ -270,7 +270,7 @@ namespace mthl
        * Returns:
        *   Vector coordinate with given number
        */
-      Type & GetField(const int32_t i)
+      Type & getField(const int32_t i)
       {
         if (i <= 0)
           return x;
@@ -286,7 +286,7 @@ namespace mthl
        * Returns:
        *   Normalized vector
        */
-      vec<Type> Normalize() const
+      vec<Type> normalize() const
       {
         return *this / !(*this);
       } // End of 'Normalize' function
@@ -297,21 +297,21 @@ namespace mthl
        * Returns:
        *   Vector squared length.
        */
-      Type LengthSquared() const
+      Type lengthSquared() const
       {
         return x * x + y * y + z * z;
       } // End of 'LengthSquared' function
 
       /* Distance evaluation function.
        * Arguments:
-       *   vec V -- vector to find distance with
+       *   vec v -- vector to find distance with
        *
        * Returns:
        *   Distance between points.
        */
-      Type Distance( const vec<Type> & V ) const
+      Type Distance(const vec<Type> & v) const
       {
-        return !(*this - V);
+        return !(*this - v);
       } // End of 'Distance' function
 
       /* Random vector generation function.
@@ -320,7 +320,7 @@ namespace mthl
        * Returns:
        *   Random normalized vector.
        */
-      static vec<Type> RandomVector( void )
+      static vec<Type> randomVector()
       {
         return vec<Type>(2.0 * rand() / RAND_MAX - 1, 2.0 * rand() / RAND_MAX - 1,
             2.0 * rand() / RAND_MAX - 1);
@@ -332,10 +332,25 @@ namespace mthl
        * Returns:
        *   Vector with zero coordinates.
        */
-      static vec<Type> Zero( void )
+      static vec<Type> zero()
       {
         return vec<Type>();
       } // End of 'Zero' function
+
+      /* Vector with zero fields creation function.
+       * Arguments:
+       *
+       * const vec<Type> &v1, &v2 -- vectors to get angle between
+       * Returns:
+       *   Angle between vectors
+       */
+      static float getAngleBetween(const vec<Type> &v1, const vec<Type> &v2)
+      {
+        if (!v1 == 0 || !v2 == 0)
+          return 0;
+        return acosf(v1 & v2 / !v1 / !v2);
+      } // End of 'getAngleBetween' function
+
     }; // End of 'vec' class
   }// end of 'math' namespace
 } // end of 'mthl' namespace

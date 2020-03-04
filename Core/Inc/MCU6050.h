@@ -4,7 +4,7 @@
  *               MCU6050 sensor
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 03.03.2020
+ * Last change : 04.03.2020
  ******************************/
 
 #ifndef __MCU6050_H_
@@ -43,7 +43,7 @@ namespace mthl
     /* Read data from gyroscope
      *
      * Arguments:
-     *   math::vec &v -- array to store data
+     *   math::vec &v -- vector to store data
      *
      * Returns:
      *   None.
