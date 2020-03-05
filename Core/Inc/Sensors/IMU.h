@@ -4,11 +4,13 @@
  *               IMU sensors interface
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 04.03.2020
+ * Last change : 05.03.2020
  ******************************/
 
 #ifndef __IMU_H_
 #define __IMU_H_
+
+#include <stdexcept>
 
 #include "math/vec.h"
 
@@ -32,7 +34,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readAccel(math::vec<float> &v) {};
+    virtual void readAccel(math::vec<float> &v) {throw std::logic_error("Not implemented");};
 
     /* Read data from gyroscope
      *
@@ -42,7 +44,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readGyro(math::vec<float> &v) {};
+    virtual void readGyro(math::vec<float> &v) {throw std::logic_error("Not implemented");};
 
     /* Read data from accelerometer
      *
@@ -52,7 +54,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readTemp(float &t) {};
+    virtual void readTemp(float &t) {throw std::logic_error("Not implemented");};
 
     /* Calibrate device
      *
@@ -62,7 +64,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void calibrate(int32_t iterations = 1000) {};
+    virtual void calibrate(int32_t iterations = 1000) {throw std::logic_error("Not implemented");};
   }; // End of 'IMU' class
 } // end of 'mthl' namespace
 
