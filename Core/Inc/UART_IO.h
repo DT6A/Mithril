@@ -4,7 +4,7 @@
  *               UART I/O interface
  * Author      : Tarasov Denis
  * Create date : 01.03.2020
- * Last change : 02.03.2020
+ * Last change : 07.03.2020
  ******************************/
 
 #ifndef __UART_IO_H_
@@ -19,6 +19,7 @@ namespace mthl
 {
   /* Functions declarations */
 
+  /*** Writing ***/
   inline void writeChar(UART_HandleTypeDef *huart, int32_t ch);
   inline void writeInt(UART_HandleTypeDef *huart, int32_t n,
       const char *end = nullptr);
@@ -26,6 +27,8 @@ namespace mthl
       int32_t precision = 4);
   inline void writeWord(UART_HandleTypeDef *huart, const char *s);
 
+  /*** Reading ***/
+  inline uint8_t readByte(UART_HandleTypeDef *huart);
 
   /* Functions definitions */
 
@@ -136,7 +139,23 @@ namespace mthl
       writeChar(huart, *s++);
   } // End of 'writeWord' function
 
-  // TODO INPUT
+  /* Read one byte with UART
+   * Waits until any byte is given
+   *
+   * Arguments:
+   *   UART_HandleTypeDef *huart -- UART handler
+   *
+   * Returns:
+   *   Byte which was read
+   */
+  inline uint8_t readByte(UART_HandleTypeDef *huart)
+  {
+    uint8_t byte = 0;
+
+    while (HAL_UART_Receive(huart, &byte, 1, 1000) != HAL_OK)
+      ;
+    return byte;
+  } // End of 'readByte' function
 
 } // end of 'mthl' namespace
 

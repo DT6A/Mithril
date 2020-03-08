@@ -346,9 +346,12 @@ namespace mthl
        */
       static float getAngleBetween(const vec<Type> &v1, const vec<Type> &v2)
       {
-        if (!v1 == 0 || !v2 == 0)
+        Type l1 = !v1, l2 = !v2;
+
+        if (l1 == 0 || l2 == 0)
           return 0;
-        return acosf(v1 & v2 / !v1 / !v2);
+
+        return acosf(v1 & v2 / (l1 * l2));
       } // End of 'getAngleBetween' function
 
     }; // End of 'vec' class
