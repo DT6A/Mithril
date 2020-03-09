@@ -10,6 +10,9 @@
 
 #include "stm32f4xx_hal.h"
 #include "Controller/Controller.h"
+#include "UART_IO.h"
+
+extern UART_HandleTypeDef huart2;
 
 /* Controller default constructor */
 mthl::Controller::Controller()
@@ -27,8 +30,7 @@ mthl::Controller & mthl::Controller::getInstance()
 /* Run program function */
 void mthl::Controller::Run()
 {
-  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-  HAL_Delay(100);
+  writeWord(&huart2, "Hello world\n");
 } // End of 'mthl::Controller::Run' function
 
 
