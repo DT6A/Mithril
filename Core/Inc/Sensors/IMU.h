@@ -12,7 +12,7 @@
 
 #include <stdexcept>
 
-#include "math/vec.h"
+#include "Math/vec.h"
 
 /* Mithril namespace */
 namespace mthl

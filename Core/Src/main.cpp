@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "Sensors/MCU6050.h"
 #include "UART_IO.h"
+#include "Controller/Controller.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,6 +96,7 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  mthl::Controller controller = mthl::Controller::getInstance();
 
   /* USER CODE END 2 */
 
@@ -103,7 +105,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    controller.Run();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
