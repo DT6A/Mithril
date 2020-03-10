@@ -73,16 +73,16 @@ namespace mthl
     // Get all digits
     do
     {
-      buf[pos++] = '0' + n % 10;
+      UART_buf[pos++] = '0' + n % 10;
       n /= 10;
     } while (n);
 
     // Flip digits
     for (int32_t i = 0; i < pos; ++i)
-      rev[i] = buf[pos - i - 1];
+      UART_rev[i] = UART_buf[pos - i - 1];
     // Write all digits
 
-    writeBytes(huart, rev, pos);
+    writeBytes(huart, UART_rev, pos);
 
     // Write postfix
     if (end != nullptr)
@@ -117,12 +117,12 @@ namespace mthl
     for (int32_t i = 0; i < precision; ++i)
     {
       n *= 10;
-      buf[i] = '0' + (int32_t)n;
+      UART_buf[i] = '0' + (int32_t)n;
       n -= (int32_t)n;
     }
 
     // Write buffer
-    writeBytes(huart, buf, precision);
+    writeBytes(huart, UART_buf, precision);
 
     // Write postfix
     if (end != nullptr)
