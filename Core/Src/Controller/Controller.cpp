@@ -4,8 +4,8 @@
  *               Controller module.
  *               Controller class implementation.
  * Author      : Filippov Denis
- * Create date : 09.09.2020.
- * Last change : 09.09.2020.
+ * Create date : 09.03.2020.
+ * Last change : 10.03.2020.
  ******************************/
 
 #include "stm32f4xx_hal.h"
@@ -17,6 +17,7 @@ extern UART_HandleTypeDef huart2;
 /* Controller default constructor */
 mthl::Controller::Controller()
 {
+  /// Stoop initialization
 } // End of 'mthl::Controller::Controller' constructor
 
 /* Getting instance of controller function */
@@ -30,7 +31,25 @@ mthl::Controller & mthl::Controller::getInstance()
 /* Run program function */
 void mthl::Controller::Run()
 {
-  writeWord(&huart2, "Hello world\n");
+  /*
+  while (state != EXIT)
+  {
+    mthl::request::getRequests(reqQueue);
+
+    while (!reqQueue.empty())
+    {
+      try
+      {
+        state = reqQueue.top().doCommand();
+      }
+      catch (mthl::log::exception e)
+      {
+        // TODO
+      }
+      reqQueue.pop().
+    }
+  }
+   */
 } // End of 'mthl::Controller::Run' function
 
 

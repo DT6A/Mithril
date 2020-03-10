@@ -5,14 +5,18 @@
  *               Controller class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 09.03.2020
+ * Last change : 10.03.2020
  ******************************/
 
 #ifndef __CONTROLLER_H_
 #define __CONTROLLER_H_
 
 #include <vector>
-#include <Sensors/IMU.h>
+#include <queue>
+#include <functional>
+
+#include "Sensors/IMU.h"
+#include "Request/Request.h"
 
 /* Mithril namespace */
 namespace mthl
@@ -27,25 +31,31 @@ namespace mthl
   {
   public:
     /* Getting instance of controller function.
+     *
      * Arguments:
      *   None.
+     *
      * Returns:
      *   Reference on singletone controller.
      */
     static Controller & getInstance();
 
     /* Run program function.
+     *
      * Arguments:
      *   None.
+     *
      * Returns:
      *   None.
      */
     void Run();
 
   private:
-    std::vector<IMU> IMUSensors; // list of IMU-sensors
+    std::queue<Request> reqQueue; // queue of requests
+    std::vector<IMU> IMUSensors;  // list of IMU-sensors
     /* Controller default constructor.
      * Constructor is private because controller is singletone.
+     *
      * Arguments:
      *   None.
      */
