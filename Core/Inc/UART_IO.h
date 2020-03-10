@@ -17,7 +17,7 @@
 /* Mithril namespace */
 namespace mthl
 {
-  static uint8_t buf[19] = {0}, rev[19] = {0}; // Buffers for writing
+  static uint8_t UART_buf[19] = {0}, UART_rev[19] = {0}; // Buffers for writing
 
   /* Functions declarations */
 
