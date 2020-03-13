@@ -5,14 +5,12 @@
  *               Controller class implementation.
  * Author      : Filippov Denis
  * Create date : 09.03.2020.
- * Last change : 10.03.2020.
+ * Last change : 14.03.2020.
  ******************************/
 
 #include "stm32f4xx_hal.h"
 #include "Controller/Controller.h"
 #include "UART_IO.h"
-
-extern UART_HandleTypeDef huart2;
 
 /* Controller default constructor */
 mthl::Controller::Controller()
@@ -31,13 +29,22 @@ mthl::Controller & mthl::Controller::getInstance()
 /* Run program function */
 void mthl::Controller::Run()
 {
-  /*
-  while (state != EXIT)
+  /* Initialize smth */
+  // TODO
+
+  /* Initialize state of request */
+  Request::State state = Request::State::OK;
+
+  /* Main loop of getting requests */
+  while (state != Request::State::EXIT)
   {
-    mthl::request::getRequests(reqQueue);
+    state = mthl::Request::getRequests(reqQueue);
 
     while (!reqQueue.empty())
     {
+      reqQueue.front().doCommand();
+      /* This will recomment when exceptions are added */
+      /*
       try
       {
         state = reqQueue.top().doCommand();
@@ -46,10 +53,10 @@ void mthl::Controller::Run()
       {
         // TODO
       }
-      reqQueue.pop().
+      */
+      reqQueue.pop();
     }
   }
-   */
 } // End of 'mthl::Controller::Run' function
 
 

@@ -5,7 +5,7 @@
  *               Request class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 10.03.2020
+ * Last change : 14.03.2020
  ******************************/
 
 
@@ -43,6 +43,8 @@ namespace mthl
     Request(uint8_t byte);
 
     /* Get requests from application function.
+     * This function returns state. Maybe we will
+     * abandon it.
      *
      * Arguments:
      *   std::queue<Request> &reqQueue -- reference on queue of Requests.
