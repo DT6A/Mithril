@@ -4,7 +4,7 @@
  *               UART I/O interface
  * Author      : Tarasov Denis
  * Create date : 01.03.2020
- * Last change : 07.03.2020
+ * Last change : 10.03.2020
  ******************************/
 
 #ifndef __UART_IO_H_
@@ -17,6 +17,8 @@
 /* Mithril namespace */
 namespace mthl
 {
+  static uint8_t UART_buf[19] = {0}, UART_rev[19] = {0}; // Buffers for writing
+
   /* Functions declarations */
 
   /*** Writing ***/
@@ -25,6 +27,7 @@ namespace mthl
       const char *end = nullptr);
   inline void writeFloat(UART_HandleTypeDef *huart, float n, const char *end = nullptr,
       int32_t precision = 4);
+  inline void writeBytes(UART_HandleTypeDef *huart, const uint8_t *s, uint32_t len);
   inline void writeWord(UART_HandleTypeDef *huart, const char *s);
 
   /*** Reading ***/
@@ -59,6 +62,7 @@ namespace mthl
    */
   inline void writeInt(UART_HandleTypeDef *huart, int32_t n, const char *end)
   {
+    int32_t pos = 0;
     // Process negative number
     if (n < 0)
     {
@@ -67,18 +71,18 @@ namespace mthl
     }
 
     // Get all digits
-    int32_t pos = 0, buf[19];
     do
     {
-      buf[pos++] = '0' + n % 10;
+      UART_buf[pos++] = '0' + n % 10;
       n /= 10;
     } while (n);
 
+    // Flip digits
+    for (int32_t i = 0; i < pos; ++i)
+      UART_rev[i] = UART_buf[pos - i - 1];
     // Write all digits
-    do
-     {
-      writeChar(huart, buf[--pos]);
-     } while (pos);
+
+    writeBytes(huart, UART_rev, pos);
 
     // Write postfix
     if (end != nullptr)
@@ -109,19 +113,36 @@ namespace mthl
     n -= (int32_t)n;
     writeChar(huart, '.');
 
-
-    // Write digits after dot
+    // Write digits after dot to buffer
     for (int32_t i = 0; i < precision; ++i)
     {
       n *= 10;
-      writeChar(huart, '0' + (int32_t)n);
+      UART_buf[i] = '0' + (int32_t)n;
       n -= (int32_t)n;
     }
+
+    // Write buffer
+    writeBytes(huart, UART_buf, precision);
 
     // Write postfix
     if (end != nullptr)
       writeWord(huart, end);
   } // End of 'writeFloat' function
+
+  /* Write bytes string with UART
+   *
+   * Arguments:
+   *   UART_HandleTypeDef *huart -- UART handler
+   *   const uint8_t *s -- buffer to write
+   *
+   * Returns:
+   *   None.
+   */
+  inline void writeBytes(UART_HandleTypeDef *huart, const uint8_t *s, uint32_t len)
+  {
+    // Write each buffer
+    HAL_UART_Transmit(huart, (uint8_t *)s, len, 1000);
+  } // End of 'writeBytes' function
 
   /* Write c-style string with UART
    *
@@ -134,9 +155,12 @@ namespace mthl
    */
   inline void writeWord(UART_HandleTypeDef *huart, const char *s)
   {
-    // Write each character
+    uint32_t len = 0;
+    // Count length
     while (*s)
-      writeChar(huart, *s++);
+      len++, s++;
+    // Write string
+    writeBytes(huart, (uint8_t *)(s - len), len);
   } // End of 'writeWord' function
 
   /* Read one byte with UART
