@@ -5,7 +5,7 @@
  *               Request class implementation
  * Author      : Filippov Denis
  * Create date : 10.03.2020
- * Last change : 14.03.2020
+ * Last change : 22.03.2020
  ******************************/
 
 #include "Controller/Request/Request.h"
@@ -29,21 +29,23 @@ std::map<uint8_t, mthl::Request::Command> mthl::Request::fromByteToCmdMap =
 /* Time variable, will be deleted. It helps to power on LD2 */
 static bool isLD2On = false;
 /* Map who matches commands and their function */
-std::map<mthl::Request::Command, std::function<void(void)>> mthl::Request::fromCmdToFuncMap =
+std::map<mthl::Request::Command, std::function<mthl::Request::State(void)>> mthl::Request::fromCmdToFuncMap =
 {
   {Command::POWER_ON_LED,
-   []()
+   []() -> State
    {
      if (!isLD2On)
        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5), isLD2On = true;
+     return State::OK;
    }
   },
 
   {Command::POWER_OFF_LED,
-   []()
+   []() -> State
    {
      if (isLD2On)
        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5), isLD2On = false;
+     return State::OK;
    }
   }
 };
@@ -52,25 +54,11 @@ std::map<mthl::Request::Command, std::function<void(void)>> mthl::Request::fromC
 mthl::Request::Request(uint8_t byte)
   : command(fromByteToCmdMap[byte])
 {
+  // There we  can check byte and throw exception for example
 } // End of 'mthl::Request::Request' constructor
 
-/* Get requests from application function */
-mthl::Request::State mthl::Request::getRequests(std::queue<Request> &reqQueue)
-{
-  uint8_t byte;
-
-  byte = mthl::readByte(&huart6);
-  if (byte == '0')
-    return State::EXIT;
-  if (fromByteToCmdMap.find(byte) != fromByteToCmdMap.end())
-    reqQueue.push(Request(byte));
-
-  /* Maybe we will add other states */
-  return State::OK;
-} // End of 'mthl::Request::getRequests' function
-
 /* Doing command from request function */
-void mthl::Request::doCommand() const
+mthl::Request::State mthl::Request::doCommand() const
 {
-  fromCmdToFuncMap[command]();
+  return fromCmdToFuncMap[command]();
 } // End of 'mthl::Request::doCommand' function

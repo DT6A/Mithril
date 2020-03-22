@@ -5,7 +5,7 @@
  *               Controller class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 10.03.2020
+ * Last change : 22.03.2020
  ******************************/
 
 #ifndef __CONTROLLER_H_
@@ -51,8 +51,15 @@ namespace mthl
     void Run();
 
   private:
-    std::queue<Request> reqQueue; // queue of requests
     std::vector<IMU> IMUSensors;  // list of IMU-sensors
+    std::queue<Request> reqQueue; // queue of requests
+
+    /* Declaration of friend. This and only this external function
+     * need reqQueue. Moreover, it will put requests in this queue only, because we have
+     * singletone controller. In result we avoid globalization of reqQueue.
+     */
+    friend void ::HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+
     /* Controller default constructor.
      * Constructor is private because controller is singletone.
      *

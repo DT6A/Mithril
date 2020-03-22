@@ -5,7 +5,7 @@
  *               Controller class implementation.
  * Author      : Filippov Denis
  * Create date : 09.03.2020.
- * Last change : 14.03.2020.
+ * Last change : 22.03.2020.
  ******************************/
 
 #include "stm32f4xx_hal.h"
@@ -29,8 +29,8 @@ mthl::Controller & mthl::Controller::getInstance()
 /* Run program function */
 void mthl::Controller::Run()
 {
-  /* Initialize smth */
-  // TODO
+  /* Initialize smth (maybe) */
+  /// TODO
 
   /* Initialize state of request */
   Request::State state = Request::State::OK;
@@ -38,11 +38,9 @@ void mthl::Controller::Run()
   /* Main loop of getting requests */
   while (state != Request::State::EXIT)
   {
-    state = mthl::Request::getRequests(reqQueue);
-
     while (!reqQueue.empty())
     {
-      reqQueue.front().doCommand();
+      state = reqQueue.front().doCommand();
       /* This will recomment when exceptions are added */
       /*
       try
@@ -51,7 +49,7 @@ void mthl::Controller::Run()
       }
       catch (mthl::log::exception e)
       {
-        // TODO
+        /// TODO
       }
       */
       reqQueue.pop();

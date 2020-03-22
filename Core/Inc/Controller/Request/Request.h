@@ -5,7 +5,7 @@
  *               Request class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 14.03.2020
+ * Last change : 22.03.2020
  ******************************/
 
 
@@ -28,7 +28,7 @@ namespace mthl
   class Request
   {
   public:
-    /* Reading request state enum class declaration */
+    /* State after doing command from tequest enum class declaration */
     enum class State : uint8_t
     {
       EXIT, // got request for shutting down of STM
@@ -42,27 +42,15 @@ namespace mthl
      */
     Request(uint8_t byte);
 
-    /* Get requests from application function.
-     * This function returns state. Maybe we will
-     * abandon it.
-     *
-     * Arguments:
-     *   std::queue<Request> &reqQueue -- reference on queue of Requests.
-     *
-     * Return:
-     *   state of program on STM.
-     */
-    static State getRequests(std::queue<Request> &reqQueue);
-
     /* Doing command from request function.
      *
      * Arguments:
      *   None.
      *
      * Returns:
-     *   None.
+     *   State of programm.
      */
-    void doCommand() const;
+    State doCommand() const;
 
   private:
     /* Request command enum class declaration */
@@ -77,7 +65,7 @@ namespace mthl
     /* Map who mathes byte and it command */
     static std::map<uint8_t, Command> fromByteToCmdMap;
     /* Map who matches commands and their function */
-    static std::map<Command, std::function<void(void)>> fromCmdToFuncMap;
+    static std::map<Command, std::function<State(void)>> fromCmdToFuncMap;
   }; // End of 'Request' class
 } // end of 'mthl' namespace
 
