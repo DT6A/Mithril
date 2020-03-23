@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "UART_IO.h"
+#include "Controller/Controller.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,6 +47,8 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart6;
 
+uint8_t rx[1];
+uint8_t tx[1] = {78};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -96,20 +99,14 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
+
+  /* Itialize of UART6 interrupt */
+  HAL_UART_Receive_IT(&huart6, rx, sizeof(rx));
   /* USER CODE BEGIN 2 */
+  mthl::Controller &controller = mthl::Controller::getInstance();
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-    HAL_Delay(100);
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+  controller.Run();
+ /* USER CODE END 2 */
 }
 
 /**
@@ -277,6 +274,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/* Receive interrupt call back function.
+ * Argumenst:
+ *   UART_HandleTypeDef *huart -- UART handler.
+ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  static std::queue<mthl::Request> &reqQueue = mthl::Controller::getInstance().reqQueue;
+  reqQueue.push(mthl::Request(rx[0]));
+  HAL_UART_Receive_IT(&huart6, rx, sizeof(rx));
+} // End of 'HAL_UART_RxCpltCallback' function
 
 /* USER CODE END 4 */
 
