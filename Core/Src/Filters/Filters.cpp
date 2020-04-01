@@ -17,8 +17,8 @@ mthl::math::quater<float> mthl::filters::complementary(mthl::math::quater<float>
   using mthl::math::quater;
 
   return (prev + gyro * dtime) * (1 - delta) + quater<float>(
-      atan2(accel[0], sqrt(accel[1] + accel[2])),
-      atan2(accel[1], sqrt(accel[0] + accel[2])),
-      atan2(sqrt(accel[0] + accel[1]), accel[2])
+      atan2(accel[0], sqrt(accel[1] * accel[1] + accel[2] * accel[2])),
+      atan2(accel[1], sqrt(accel[0] * accel[0] + accel[2] * accel[2])),
+      atan2(sqrt(accel[0] * accel[0] + accel[1] * accel[1]), accel[2])
       ) * delta * 180 / 3.14159265;
 }
