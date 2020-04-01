@@ -22,37 +22,37 @@ mthl::MCU6050::MCU6050(I2C_HandleTypeDef *handle) : i2c_handle(handle)
 
   if (check == SIGNATURE)  // Check device signature
   {
-    char mes[] = "Failed to initialize module";
+    //char mes[] = "Failed to initialize module";
 
     // Wake the sensor up
     Data = 0;
     if (HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, PWR_MGMT_1_REG, 1, &Data, 1, 1000) != HAL_OK)
-      throw std::logic_error(mes);
+      ;//throw std::logic_error(mes);
     // Set DATA RATE of 1KHz
     Data = 0x07;
     if (HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, SMPLRT_DIV_REG, 1, &Data, 1, 1000) != HAL_OK)
-      throw std::logic_error(mes);
+      ;//throw std::logic_error(mes);
     // Set accelerometer configuration +- 2g
     Data = 0x00;
     if (HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, ACCEL_CONFIG_REG, 1, &Data, 1, 1000) != HAL_OK)
-      throw std::logic_error(mes);
+      ;//throw std::logic_error(mes);
     // Set gyroscope configuration +- 250 d/s
     Data = 0x00;
     if (HAL_I2C_Mem_Write(i2c_handle, MPU6050_ADDR, GYRO_CONFIG_REG, 1, &Data, 1, 1000) != HAL_OK)
-      throw std::logic_error(mes);
+      ;//throw std::logic_error(mes);
     // Calibrate gyroscope
     calibrate(3000);
   }
   else
-    throw std::logic_error("Failed to connect to device. Probably device is different from the specified");
+    ;//throw std::logic_error("Failed to connect to device. Probably device is different from the specified");
 } // End of 'MCU6050' constructor
 
 /* Read accelerometer data function */
-void mthl::MCU6050::readAccel(math::vec<float> &v)
+void mthl::MCU6050::readAccel(math::quater<float> &v)
 {
   uint8_t buffer[6];
   if (HAL_I2C_Mem_Read(i2c_handle, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, buffer, 6, 1000) != HAL_OK)
-    throw std::logic_error("Lost connection with module");
+    ;//throw std::logic_error("Lost connection with module");
 
   v[0] = (int16_t)(buffer[0] << 8 | buffer[1]) / ACC_SCALE;
   v[1] = (int16_t)(buffer[2] << 8 | buffer[3]) / ACC_SCALE;
@@ -60,11 +60,11 @@ void mthl::MCU6050::readAccel(math::vec<float> &v)
 } // End of 'readAccel' function
 
 /* Read raw gyroscope data function */
-void mthl::MCU6050::readGyroRaw(math::vec<float> &v)
+void mthl::MCU6050::readGyroRaw(math::quater<float> &v)
 {
   uint8_t buffer[6];
   if (HAL_I2C_Mem_Read(i2c_handle, MPU6050_ADDR, GYRO_XOUT_H_REG, 1, buffer, 6, 1000) != HAL_OK)
-    throw std::logic_error("Lost connection with module");
+    ;//throw std::logic_error("Lost connection with module");
 
   v[0] = (int16_t)(buffer[0] << 8 | buffer[1]) / GYRO_SCALE;
   v[1] = (int16_t)(buffer[2] << 8 | buffer[3]) / GYRO_SCALE;
@@ -72,7 +72,7 @@ void mthl::MCU6050::readGyroRaw(math::vec<float> &v)
 } // End of 'readGyroRaw' function
 
 /* Read gyroscope data function */
-void mthl::MCU6050::readGyro(math::vec<float> &v)
+void mthl::MCU6050::readGyro(math::quater<float> &v)
 {
   readGyroRaw(v);
 
@@ -82,7 +82,7 @@ void mthl::MCU6050::readGyro(math::vec<float> &v)
 /* Calibrate device */
 void mthl::MCU6050::calibrate(int32_t iterations)
 {
-  math::vec<float> gData;
+  math::quater<float> gData;
 
   for (int32_t i = 0; i < iterations; ++i)
   {

@@ -4,7 +4,7 @@
  *               IMU sensors interface
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 05.03.2020
+ * Last change : 01.04.2020
  ******************************/
 
 #ifndef __IMU_H_
@@ -12,7 +12,7 @@
 
 #include <stdexcept>
 
-#include "Math/vec.h"
+#include "Math/quater.h"
 
 /* Mithril namespace */
 namespace mthl
@@ -29,22 +29,22 @@ namespace mthl
     /* Read data from accelerometer
      *
      * Arguments:
-     *   math::vec &v -- vector to store data
+     *   math::quater &v -- quaternion to store data
      *
      * Returns:
      *   None.
      */
-    virtual void readAccel(math::vec<float> &v) {throw std::logic_error("Not implemented");};
+    virtual void readAccel(math::quater<float> &v) {/*throw std::logic_error("Not implemented");*/};
 
     /* Read data from gyroscope
      *
      * Arguments:
-     *   math::vec &v -- vector to store data
+     *   math::vec &v -- quaternion to store data
      *
      * Returns:
      *   None.
      */
-    virtual void readGyro(math::vec<float> &v) {throw std::logic_error("Not implemented");};
+    virtual void readGyro(math::quater<float> &v) {/*throw std::logic_error("Not implemented");*/};
 
     /* Read data from accelerometer
      *
@@ -54,7 +54,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readTemp(float &t) {throw std::logic_error("Not implemented");};
+    virtual void readTemp(float &t) {/*throw std::logic_error("Not implemented");*/};
 
     /* Calibrate device
      *
@@ -64,7 +64,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void calibrate(int32_t iterations = 1000) {throw std::logic_error("Not implemented");};
+    virtual void calibrate(int32_t iterations = 1000) {/*throw std::logic_error("Not implemented");*/};
   }; // End of 'IMU' class
 } // end of 'mthl' namespace
 

@@ -4,7 +4,7 @@
  *               MCU6050 sensor
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 04.03.2020
+ * Last change : 01.04.2020
  ******************************/
 
 #ifndef __MCU6050_H_
@@ -33,22 +33,22 @@ namespace mthl
     /* Read data from accelerometer
      *
      * Arguments:
-     *   math::vec &v -- vector to store data
+     *   math::quater &v -- quaternion to store data
      *
      * Returns:
      *   None.
      */
-    void readAccel(math::vec<float> &v) override;
+    void readAccel(math::quater<float> &v) override;
 
     /* Read data from gyroscope
      *
      * Arguments:
-     *   math::vec &v -- vector to store data
+     *   math::vec &v -- quaternion to store data
      *
      * Returns:
      *   None.
      */
-    void readGyro(math::vec<float> &v) override;
+    void readGyro(math::quater<float> &v) override;
 
     /* Calibrate device
      *
@@ -80,17 +80,17 @@ namespace mthl
     static constexpr const float ACC_SCALE = 16384.0, // Accelerometer scale +-2g
                       GYRO_SCALE = 131.0;             // Gyroscope scale +-250 d/s
 
-    math::vec<float> calibratedGyro; // Calibrated gyroscope vector
+    math::quater<float> calibratedGyro; // Calibrated gyroscope quaternion
 
     /* Read raw data from gyroscope
      *
      * Arguments:
-     *   math::vec &v -- array to store data
+     *   math::quater &v -- array to store data
      *
      * Returns:
      *   None.
      */
-    void readGyroRaw(math::vec<float> &v);
+    void readGyroRaw(math::quater<float> &v);
   }; // End of 'MCU6050' class
 } // end of 'mthl' namespace
 
