@@ -4,7 +4,7 @@
  *               Math vector
  * Author      : Tarasov Denis
  * Create date : 03.03.2020
- * Last change : 04.03.2020
+ * Last change : 31.03.2020
  ******************************/
 
 #ifndef __VEC_H_
@@ -12,6 +12,8 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <ctype.h>
+#include <stdint.h>
 
 /* Mithril namespace */
 namespace mthl
