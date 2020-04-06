@@ -35,7 +35,10 @@ std::map<mthl::Request::Command, std::function<mthl::Request::State(void)>> mthl
    []() -> State
    {
      if (!isLD2On)
+     {
        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5), isLD2On = true;
+       mthl::writeWord(&huart2, "On\n");
+     }
      return State::OK;
    }
   },
@@ -44,7 +47,10 @@ std::map<mthl::Request::Command, std::function<mthl::Request::State(void)>> mthl
    []() -> State
    {
      if (isLD2On)
+     {
        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5), isLD2On = false;
+       mthl::writeWord(&huart2, "Off\n");
+     }
      return State::OK;
    }
   }

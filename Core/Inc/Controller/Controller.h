@@ -5,7 +5,7 @@
  *               Controller class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 22.03.2020
+ * Last change : 05.04.2020
  ******************************/
 
 #ifndef __CONTROLLER_H_
@@ -17,6 +17,7 @@
 
 #include "Sensors/IMU.h"
 #include "Request/Request.h"
+#include "Functionality/Functionality.h"
 
 /* Mithril namespace */
 namespace mthl
@@ -27,7 +28,7 @@ namespace mthl
    * It initializes all sensors, gets requests from application, takes data from
    * sensors and work with them.
    */
-  class Controller
+  class Controller final
   {
   public:
     /* Getting instance of controller function.
@@ -51,8 +52,14 @@ namespace mthl
     void Run();
 
   private:
-    std::vector<IMU> IMUSensors;  // list of IMU-sensors
-    std::queue<Request> reqQueue; // queue of requests
+    std::vector<IMU *> IMUSensors;  // list of IMU-sensors
+    std::queue<Request> reqQueue;   // queue of requests
+
+    /* Vector of functions of Mithril for processing in main loop.
+     * first element  -- function
+     * second element -- state (powered on / off).
+     */
+    std::vector<std::pair<BaseFunc *, bool>> mithrilFuncs;
 
     /* Declaration of friend. This and only this external function
      * need reqQueue. Moreover, it will put requests in this queue only, because we have
@@ -67,6 +74,13 @@ namespace mthl
      *   None.
      */
     Controller();
+
+    /* Controller default destructor.
+     *
+     * Arguments:
+     *   None.
+     */
+    ~Controller();
   }; // End of 'Controller' class
 } // end of 'mthl' namespace
 
