@@ -64,7 +64,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void calibrate(int32_t iterations = 1000) {/*throw std::logic_error("Not implemented");*/};
+    virtual void calibrate(int32_t iterations = 100) {/*throw std::logic_error("Not implemented");*/};
   }; // End of 'IMU' class
 } // end of 'mthl' namespace
 
