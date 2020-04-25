@@ -5,7 +5,7 @@
  *               Request class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 22.03.2020
+ * Last change : 04.04.2020
  ******************************/
 
 
@@ -66,6 +66,11 @@ namespace mthl
     static std::map<uint8_t, Command> fromByteToCmdMap;
     /* Map who matches commands and their function */
     static std::map<Command, std::function<State(void)>> fromCmdToFuncMap;
+
+    /* Declaration of friend. This and only this external function
+     * need Request private field.
+     */
+    friend void ::HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
   }; // End of 'Request' class
 } // end of 'mthl' namespace
 

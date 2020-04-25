@@ -281,7 +281,8 @@ static void MX_GPIO_Init(void)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   static std::queue<mthl::Request> &reqQueue = mthl::Controller::getInstance().reqQueue;
-  reqQueue.push(mthl::Request(rx[0]));
+  if (mthl::Request::fromByteToCmdMap.find(rx[0]) != mthl::Request::fromByteToCmdMap.end())
+    reqQueue.push(mthl::Request(rx[0]));
   HAL_UART_Receive_IT(&huart6, rx, sizeof(rx));
 } // End of 'HAL_UART_RxCpltCallback' function
 
