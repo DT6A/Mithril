@@ -4,7 +4,7 @@
  *               MCU6050 sensor
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 01.04.2020
+ * Last change : 25.04.2020
  ******************************/
 
 #ifndef __MCU6050_H_
@@ -27,8 +27,9 @@ namespace mthl
      *
      * Arguments:
      *   I2C_HandleTypeDef *handle -- I2C handler
+     *   uit8_t addr -- device address
      */
-    explicit MCU6050(I2C_HandleTypeDef *handle);
+    explicit MCU6050(I2C_HandleTypeDef *handle, uint8_t addr);
 
     /* Read data from accelerometer
      *
@@ -60,12 +61,23 @@ namespace mthl
      */
     void calibrate(int32_t iterations) override;
 
+    /* Evaluate angles
+     *
+     * Arguments:
+     *   None.
+     *
+     * Returns:
+     *   Filtered angles
+     */
+    math::quater<float> getAngles();
+
+    static constexpr const uint8_t MPU6050_ADDR_1 = 0xD0,  // Device register on 5v
+                      MPU6050_ADDR_2 = 0xD2;  // Device register on 3.3v
   private:
     I2C_HandleTypeDef *i2c_handle;
-
+    uint8_t addres;
     /* MCU6050 registers */
-    static constexpr const uint8_t MPU6050_ADDR = 0xD0,  // Device register
-                      GYRO_CONFIG_REG = 0x1b,  // Gyroscope register for config
+    static constexpr const uint8_t GYRO_CONFIG_REG = 0x1b,  // Gyroscope register for config
                       ACCEL_CONFIG_REG = 0x1C, // Accelerometer register for config
                       GYRO_XOUT_H_REG = 0x43,  // Gyroscope register for getting data
                       ACCEL_XOUT_H_REG = 0x3B, // Accelerometer register for getting data
@@ -80,8 +92,9 @@ namespace mthl
     static constexpr const float ACC_SCALE = 16384.0, // Accelerometer scale +-2g
                       GYRO_SCALE = 131.0;             // Gyroscope scale +-250 d/s
 
-    math::quater<float> calibratedGyro; // Calibrated gyroscope quaternion
-
+    math::quater<float> calibratedGyro, // Calibrated gyroscope quaternion
+                      angles,           // Filtered angles
+                      calibratedAngles; // Calibrated angles
     /* Read raw data from gyroscope
      *
      * Arguments:
