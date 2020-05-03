@@ -20,7 +20,7 @@ extern UART_HandleTypeDef huart2;
 /* Controller default constructor */
 mthl::Controller::Controller()
 {
-  IMUSensors.push_back(new MCU6050(&hi2c1));
+  //IMUSensors.push_back(new MCU6050(&hi2c1));
   mithrilFuncs.push_back({new PostureProc(IMUSensors[0]), true});
 } // End of 'mthl::Controller::Controller' constructor
 
