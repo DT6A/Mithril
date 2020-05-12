@@ -5,7 +5,7 @@
  *               Controller class implementation.
  * Author      : Filippov Denis
  * Create date : 09.03.2020.
- * Last change : 04.04.2020.
+ * Last change : 13.05.2020.
  ******************************/
 
 #include "stm32f4xx_hal.h"
@@ -15,21 +15,17 @@
 #include "Controller/Functionality/Health/Posture/Posture.h"
 
 extern I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c3;
 extern UART_HandleTypeDef huart2;
 
 /* Controller default constructor */
 mthl::Controller::Controller()
 {
-  IMUSensors.push_back(new MCU6050(&hi2c1));
-  mithrilFuncs.push_back({new PostureProc(IMUSensors[0]), true});
+  IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c1, uint8_t(MCU6050::MPU6050_ADDR_1)));
+  IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c1, uint8_t(MCU6050::MPU6050_ADDR_2)));
+  IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c3, uint8_t(MCU6050::MPU6050_ADDR_1)));
+  mithrilFuncs.push_back({new PostureProc(IMUSensors), true});
 } // End of 'mthl::Controller::Controller' constructor
-
-/* Controller default destructor */
-mthl::Controller::~Controller()
-{
-  for (auto imu : IMUSensors)
-    delete imu;
-}
 
 /* Getting instance of controller function */
 mthl::Controller & mthl::Controller::getInstance()
