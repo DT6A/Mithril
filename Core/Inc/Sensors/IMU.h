@@ -4,7 +4,7 @@
  *               IMU sensors interface
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 01.04.2020
+ * Last change : 13.05.2020
  ******************************/
 
 #ifndef __IMU_H_
@@ -34,7 +34,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readAccel(math::quater<float> &v) {/*throw std::logic_error("Not implemented");*/};
+    virtual void readAccel(math::quater<float> &v) = 0;
 
     /* Read data from gyroscope
      *
@@ -44,7 +44,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readGyro(math::quater<float> &v) {/*throw std::logic_error("Not implemented");*/};
+    virtual void readGyro(math::quater<float> &v)  = 0;
 
     /* Read data from accelerometer
      *
@@ -54,7 +54,7 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void readTemp(float &t) {/*throw std::logic_error("Not implemented");*/};
+    //virtual void readTemp(float &t) = 0;//{/*throw std::logic_error("Not implemented");*/};
 
     /* Calibrate device
      *
@@ -64,7 +64,17 @@ namespace mthl
      * Returns:
      *   None.
      */
-    virtual void calibrate(int32_t iterations = 100) {/*throw std::logic_error("Not implemented");*/};
+    virtual void calibrate(int32_t iterations = 100) = 0;
+
+    /* Evaluate angles
+     *
+     * Arguments:
+     *   None.
+     *
+     * Returns:
+     *   Filtered angles
+     */
+    virtual math::quater<float> getAngles() = 0;
   }; // End of 'IMU' class
 } // end of 'mthl' namespace
 

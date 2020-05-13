@@ -69,7 +69,7 @@ namespace mthl
      * Returns:
      *   Filtered angles
      */
-    math::quater<float> getAngles();
+    math::quater<float> getAngles() override;
 
     static constexpr const uint8_t MPU6050_ADDR_1 = 0xD0,  // Device register on 5v
                       MPU6050_ADDR_2 = 0xD2;  // Device register on 3.3v
