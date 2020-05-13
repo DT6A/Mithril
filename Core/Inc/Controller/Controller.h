@@ -5,7 +5,7 @@
  *               Controller class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 05.04.2020
+ * Last change : 13.05.2020
  ******************************/
 
 #ifndef __CONTROLLER_H_
@@ -14,6 +14,7 @@
 #include <vector>
 #include <queue>
 #include <functional>
+#include <memory>
 
 #include "Sensors/IMU.h"
 #include "Request/Request.h"
@@ -52,7 +53,7 @@ namespace mthl
     void Run();
 
   private:
-    std::vector<IMU *> IMUSensors;  // list of IMU-sensors
+    std::vector<std::unique_ptr<IMU>> IMUSensors;  // list of IMU-sensors
     std::queue<Request> reqQueue;   // queue of requests
 
     /* Vector of functions of Mithril for processing in main loop.
@@ -75,12 +76,6 @@ namespace mthl
      */
     Controller();
 
-    /* Controller default destructor.
-     *
-     * Arguments:
-     *   None.
-     */
-    ~Controller();
   }; // End of 'Controller' class
 } // end of 'mthl' namespace
 

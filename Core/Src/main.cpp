@@ -23,10 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "UART_IO.h"
 #include "Controller/Controller.h"
-#include "Sensors/MCU6050.h"
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,11 +42,13 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
-I2C_HandleTypeDef hi2c2;
+I2C_HandleTypeDef hi2c3;
 
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart6;
 
+uint8_t rx[1];
+uint8_t tx[1] = {78};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -60,7 +59,7 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART6_UART_Init(void);
-static void MX_I2C2_Init(void);
+static void MX_I2C3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -69,30 +68,6 @@ static void MX_I2C2_Init(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
-
-void writeDeviceCSV(mthl::MCU6050 &device)
-{
-  mthl::math::quater<float> angles = device.getAngles();
-  mthl::writeFloat(&huart2, angles[0], ";");
-  mthl::writeFloat(&huart2, angles[1], ";");
-  mthl::writeFloat(&huart2, angles[2], ";");
-
-  device.readAccel(angles);
-  mthl::writeFloat(&huart2, angles[0], ";");
-  mthl::writeFloat(&huart2, angles[1], ";");
-  mthl::writeFloat(&huart2, angles[2], ";");
-}
-
-void writeCSV(mthl::MCU6050 &device1, mthl::MCU6050 &device2,
-    mthl::MCU6050 &device3, mthl::MCU6050 &device4, int label)
-{
-  writeDeviceCSV(device1);
-  writeDeviceCSV(device2);
-  writeDeviceCSV(device3);
-  writeDeviceCSV(device4);
-
-  mthl::writeInt(&huart2, label, "\n\r");
-}
 
 /**
   * @brief  The application entry point.
@@ -125,25 +100,14 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
-  MX_I2C2_Init();
+  MX_I2C3_Init();
+
+  /* Itialize of UART6 interrupt */
+  HAL_UART_Receive_IT(&huart6, rx, sizeof(rx));
   /* USER CODE BEGIN 2 */
-  mthl::MCU6050 device1(&hi2c1, mthl::MCU6050::MPU6050_ADDR_1);
-  mthl::MCU6050 device2(&hi2c1, mthl::MCU6050::MPU6050_ADDR_2);
-  mthl::MCU6050 device3(&hi2c2, mthl::MCU6050::MPU6050_ADDR_1);
-  mthl::MCU6050 device4(&hi2c2, mthl::MCU6050::MPU6050_ADDR_2);
+  mthl::Controller &controller = mthl::Controller::getInstance();
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-    writeCSV(device1, device2, device3, device4, 1);
-    HAL_Delay(23);
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+  controller.Run();
 }
 
 /**
@@ -219,36 +183,36 @@ static void MX_I2C1_Init(void)
 }
 
 /**
-  * @brief I2C2 Initialization Function
+  * @brief I2C3 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_I2C2_Init(void)
+static void MX_I2C3_Init(void)
 {
 
-  /* USER CODE BEGIN I2C2_Init 0 */
+  /* USER CODE BEGIN I2C3_Init 0 */
 
-  /* USER CODE END I2C2_Init 0 */
+  /* USER CODE END I2C3_Init 0 */
 
-  /* USER CODE BEGIN I2C2_Init 1 */
+  /* USER CODE BEGIN I2C3_Init 1 */
 
-  /* USER CODE END I2C2_Init 1 */
-  hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 100000;
-  hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
-  hi2c2.Init.OwnAddress1 = 0;
-  hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c2.Init.OwnAddress2 = 0;
-  hi2c2.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c2.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c2) != HAL_OK)
+  /* USER CODE END I2C3_Init 1 */
+  hi2c3.Instance = I2C3;
+  hi2c3.Init.ClockSpeed = 100000;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c3.Init.OwnAddress1 = 0;
+  hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c3.Init.OwnAddress2 = 0;
+  hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c3) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN I2C2_Init 2 */
+  /* USER CODE BEGIN I2C3_Init 2 */
 
-  /* USER CODE END I2C2_Init 2 */
+  /* USER CODE END I2C3_Init 2 */
 
 }
 
@@ -329,8 +293,8 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -345,7 +309,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+/* Receive interrupt call back function.
+ * Argumenst:
+ *   UART_HandleTypeDef *huart -- UART handler.
+ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  static std::queue<mthl::Request> &reqQueue = mthl::Controller::getInstance().reqQueue;
+  if (mthl::Request::fromByteToCmdMap.find(rx[0]) != mthl::Request::fromByteToCmdMap.end())
+    reqQueue.push(mthl::Request(rx[0]));
+  HAL_UART_Receive_IT(&huart6, rx, sizeof(rx));
+} // End of 'HAL_UART_RxCpltCallback' function
 /* USER CODE END 4 */
 
 /**

@@ -4,8 +4,9 @@
  *               Mithril functions module.
  *               Posture processing class declaration module.
  * Author      : Filippov Denis
+ *               Tarasov Denis
  * Create date : 04.04.2020
- * Last change : 05.04.2020
+ * Last change : 13.05.2020
  ******************************/
 
 #include "stm32f4xx_hal.h"
@@ -13,45 +14,37 @@
 #include "Filters/Filters.h"
 #include "UART_IO.h"
 
-// HAVE TO BE ADDED TO CONSTRUCTOR
 extern UART_HandleTypeDef huart2;
 
 /* Posture processing constructor */
-mthl::PostureProc::PostureProc(IMU *IMUSens) : IMUSensor(IMUSens), deflAngles(0), calibrAngles(0)
+mthl::PostureProc::PostureProc(const std::vector<std::unique_ptr<IMU>> &IMUSensors) : IMUSens(IMUSensors)
 {
-  mthl::math::quater<float> gyro, accel;
-  IMUSensor->readAccel(accel);
 
-  calibrAngles = mthl::filters::complementary(calibrAngles, gyro, accel, 0, 1.0);
-
-  for (int i = 0; i < 100; ++i)
-  {
-    IMUSensor->readGyro(gyro);
-    IMUSensor->readAccel(accel);
-    calibrAngles = mthl::filters::complementary(calibrAngles, gyro, accel, 0.001, 0.04);
-    HAL_Delay(1);
-  }
-
-  deflAngles = calibrAngles;
 } // End of 'mthl::PostureProc::PostureProc' constructor
 
 /* Doing posture processing function */
 void mthl::PostureProc::doFunction()
 {
-  static mthl::math::quater<float> gyro, accel, resultAngle;
+  auto deviceAngles1 = IMUSens[0]->getAngles(),
+    deviceAngles2 = IMUSens[1]->getAngles(),
+    deviceAngles3 = IMUSens[2]->getAngles();
 
-  IMUSensor->readGyro(gyro);
-  IMUSensor->readAccel(accel);
+  mthl::math::quater<float> deviceGravity1, deviceGravity2, deviceGravity3;
 
-  deflAngles = mthl::filters::complementary(deflAngles, gyro, accel, 0.04, 0.2);
-  resultAngle = deflAngles - calibrAngles;
-  mthl::writeFloat(&huart2, resultAngle[0], " ");
-  //mthl::writeFloat(&huart2, resultAngle[1], " ");
-  mthl::writeFloat(&huart2, resultAngle[2], "\n");
-  //mthl::writeFloat(&huart2, resultAngle[3], "\n");
-  //mthl::writeFloat(&huart2, deflAngles[3], "\n");
+  IMUSens[0]->readAccel(deviceGravity1);
+  IMUSens[1]->readAccel(deviceGravity2);
+  IMUSens[2]->readAccel(deviceGravity3);
 
-  HAL_Delay(25);
+  bool isPostureCorrect = (a11 * deviceAngles1[0] + a12 * deviceAngles1[1] + a13 * deviceAngles1[2] +
+      g11 * deviceGravity1[0] + g12 * deviceGravity1[1] + g13 * deviceGravity1[2] +
+      a21 * deviceAngles2[0] + a22 * deviceAngles2[1] + a23 * deviceAngles2[2] +
+      g21 * deviceGravity2[0] + g22 * deviceGravity2[1] + g23 * deviceGravity2[2] +
+      a41 * deviceAngles3[0] + a42 * deviceAngles3[1] + a43 * deviceAngles3[2] +
+      g41 * deviceGravity3[0] + g42 * deviceGravity3[1] + g43 * deviceGravity3[2]) > bias;
+
+  mthl::writeInt(&huart2, isPostureCorrect);
+
+  HAL_Delay(20);
 } // End of 'mthl::PostureProc::doFunction' function
 
 
