@@ -6,15 +6,16 @@
  * Author      : Filippov Denis
  *               Tarasov Denis
  * Create date : 04.04.2020
- * Last change : 13.05.2020
+ * Last change : 19.05.2020
  ******************************/
 
 #include "stm32f4xx_hal.h"
 #include "Controller/Functionality/Health/Posture/Posture.h"
 #include "Filters/Filters.h"
+#include "Controller/Controller.h"
 #include "UART_IO.h"
 
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart6;
 
 /* Posture processing constructor */
 mthl::PostureProc::PostureProc(const std::vector<std::unique_ptr<IMU>> &IMUSensors) : IMUSens(IMUSensors)
@@ -25,6 +26,9 @@ mthl::PostureProc::PostureProc(const std::vector<std::unique_ptr<IMU>> &IMUSenso
 /* Doing posture processing function */
 void mthl::PostureProc::doFunction()
 {
+  if (!mthl::Controller::getInstance().isPostureOnGet())
+    return;
+
   auto deviceAngles1 = IMUSens[0]->getAngles(),
     deviceAngles2 = IMUSens[1]->getAngles(),
     deviceAngles3 = IMUSens[2]->getAngles();
@@ -42,7 +46,7 @@ void mthl::PostureProc::doFunction()
       a41 * deviceAngles3[0] + a42 * deviceAngles3[1] + a43 * deviceAngles3[2] +
       g41 * deviceGravity3[0] + g42 * deviceGravity3[1] + g43 * deviceGravity3[2]) > bias;
 
-  mthl::writeInt(&huart2, isPostureCorrect);
+  mthl::writeInt(&huart6, isPostureCorrect);
 
   HAL_Delay(20);
 } // End of 'mthl::PostureProc::doFunction' function
