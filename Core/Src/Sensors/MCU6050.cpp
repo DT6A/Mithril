@@ -4,7 +4,7 @@
  *               MCU6050 sensor
  * Author      : Tarasov Denis
  * Create date : 02.03.2020
- * Last change : 25.04.2020
+ * Last change : 15.05.2020
  ******************************/
 
 #include <stdexcept>
@@ -115,7 +115,7 @@ void mthl::MCU6050::calibrate(int32_t iterations)
 
   calibratedAngles = mthl::filters::complementary(calibratedAngles, gyro, accel, 0, 1.0);
 
-  for (int i = 0; i < 100; ++i)
+  for (int i = 0; i < iterations; ++i)
   {
     readGyro(gyro);
     readAccel(accel);
