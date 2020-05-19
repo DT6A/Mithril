@@ -5,7 +5,7 @@
  *               Request class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 04.04.2020
+ * Last change : 18.05.2020
  ******************************/
 
 
@@ -57,7 +57,10 @@ namespace mthl
     enum class Command : uint8_t
     {
       POWER_ON_LED,
-      POWER_OFF_LED
+      POWER_OFF_LED,
+      POSTURE_ON,
+      POSTURE_OFF,
+      CALIBRATE
     }; // End of 'Command' enum class
 
     Command command; // command of this request
