@@ -13,10 +13,12 @@
 
 #include "Sensors/MCU6050.h"
 #include "Controller/Functionality/Health/Posture/Posture.h"
+#include "UART_IO.h"
 
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c3;
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart6;
 
 /* Controller default constructor */
 mthl::Controller::Controller()
@@ -69,6 +71,24 @@ void mthl::Controller::Run()
       if (mF.second)
         mF.first->doFunction();
   }
+
 } // End of 'mthl::Controller::Run' function
 
+/* isPostureOn getter */
+bool mthl::Controller::isPostureOnGet()
+{
+  return isPostureOn;
+}
 
+/* isPostureOn setter */
+void mthl::Controller::isPostureOnSet(bool value)
+{
+  isPostureOn = value;
+}
+
+/* Calibrate devices */
+void mthl::Controller::calibrate()
+{
+  for (auto &imu : IMUSensors)
+    imu->calibrate(50);
+}

@@ -5,7 +5,7 @@
  *               Controller class declaration.
  * Author      : Filippov Denis
  * Create date : 09.03.2020
- * Last change : 13.05.2020
+ * Last change : 18.05.2020
  ******************************/
 
 #ifndef __CONTROLLER_H_
@@ -52,9 +52,40 @@ namespace mthl
      */
     void Run();
 
+    /* isPostureOn variable value getter.
+     *
+     * Arguments:
+     *   None.
+     *
+     * Returns:
+     *   isPostureOn variable value.
+     */
+    bool isPostureOnGet();
+
+    /* isPostureOn variable value setter.
+     *
+     * Arguments:
+     *   value -- value to set.
+     *
+     * Returns:
+     *   None.
+     */
+    void isPostureOnSet(bool value);
+
+    /* Calibrate all sensors function.
+     *
+     * Arguments:
+     *   None.
+     *
+     * Returns:
+     *   None.
+     */
+     void calibrate();
+
   private:
     std::vector<std::unique_ptr<IMU>> IMUSensors;  // list of IMU-sensors
     std::queue<Request> reqQueue;   // queue of requests
+    bool isPostureOn = true; // is posture processing enabled
 
     /* Vector of functions of Mithril for processing in main loop.
      * first element  -- function
