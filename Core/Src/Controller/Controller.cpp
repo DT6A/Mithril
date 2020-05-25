@@ -20,12 +20,14 @@ extern I2C_HandleTypeDef hi2c3;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart6;
 
+extern bool isFirstColibProc;
+
 /* Controller default constructor */
 mthl::Controller::Controller()
 {
   IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c1, uint8_t(MCU6050::MPU6050_ADDR_1)));
-  IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c1, uint8_t(MCU6050::MPU6050_ADDR_2)));
   IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c3, uint8_t(MCU6050::MPU6050_ADDR_1)));
+  IMUSensors.emplace_back(std::make_unique<MCU6050>(&hi2c1, uint8_t(MCU6050::MPU6050_ADDR_2)));
   mithrilFuncs.push_back({new PostureProc(IMUSensors), true});
 } // End of 'mthl::Controller::Controller' constructor
 
@@ -91,4 +93,5 @@ void mthl::Controller::calibrate()
 {
   for (auto &imu : IMUSensors)
     imu->calibrate(50);
+  isFirstColibProc = true;
 }

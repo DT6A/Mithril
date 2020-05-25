@@ -43,7 +43,7 @@ mthl::MCU6050::MCU6050(I2C_HandleTypeDef *handle, uint8_t addr) : i2c_handle(han
     if (HAL_I2C_Mem_Write(i2c_handle, addres, GYRO_CONFIG_REG, 1, &Data, 1, 1000) != HAL_OK)
       ;//throw std::logic_error(mes);
     // Calibrate gyroscope
-    calibrate(3000);
+    calibrate(100);
   }
   else
     ;//throw std::logic_error("Failed to connect to device. Probably device is different from the specified");
