@@ -3,8 +3,9 @@
  * Purpose     : Mithrill project.
  *               IMU sensors interface
  * Author      : Tarasov Denis
+ *               Filippov Denis
  * Create date : 02.03.2020
- * Last change : 13.05.2020
+ * Last change : 26.05.2020
  ******************************/
 
 #ifndef __IMU_H_
@@ -66,7 +67,7 @@ namespace mthl
      */
     virtual void calibrate(int32_t iterations = 100) = 0;
 
-    /* Evaluate angles
+    /* Evaluate angles of deflection.
      *
      * Arguments:
      *   None.
@@ -74,7 +75,18 @@ namespace mthl
      * Returns:
      *   Filtered angles
      */
-    virtual math::quater<float> getAngles() = 0;
+    virtual math::quater<float> getAnglesOfDefl() = 0;
+
+    /* Evaluate absolute angles.
+     *
+     * Arguments:
+     *   None.
+     *
+     * Returns:
+     *   Filtered angles
+     */
+    virtual math::quater<float> getAbsAngles() = 0;
+
   }; // End of 'IMU' class
 } // end of 'mthl' namespace
 

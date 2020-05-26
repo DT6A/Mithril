@@ -6,7 +6,7 @@
  * Author      : Filippov Denis
  *               Tarasov Denis
  * Create date : 04.04.2020
- * Last change : 20.05.2020
+ * Last change : 26.05.2020
  ******************************/
 
 #include "stm32f4xx_hal.h"
@@ -19,21 +19,21 @@ extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart6;
 
 bool isFirstColibProc = true;
-/* Posture processing constructor */
-mthl::PostureProc::PostureProc(const std::vector<std::unique_ptr<IMU>> &IMUSensors) : IMUSens(IMUSensors)
+/* Posture processing by machine learning constructor */
+mthl::PostureProcML::PostureProcML(const std::vector<std::unique_ptr<IMU>> &IMUSensors) : IMUSens(IMUSensors)
 {
 
-} // End of 'mthl::PostureProc::PostureProc' constructor
+} // End of 'mthl::PostureProcML::PostureProcML' constructor
 
 /* Doing posture processing function */
-void mthl::PostureProc::doFunction()
+void mthl::PostureProcML::doFunction()
 {
   if (!mthl::Controller::getInstance().isPostureOnGet())
     return;
 
-  auto deviceAngles1 = IMUSens[0]->getAngles(),
-    deviceAngles2 = IMUSens[1]->getAngles(),
-    deviceAngles3 = IMUSens[2]->getAngles();
+  auto deviceAngles1 = IMUSens[0]->getAnglesOfDefl(),
+    deviceAngles2 = IMUSens[1]->getAnglesOfDefl(),
+    deviceAngles3 = IMUSens[2]->getAnglesOfDefl();
 
   mthl::math::quater<float> deviceGravity1, deviceGravity2, deviceGravity3;
 
@@ -49,7 +49,7 @@ void mthl::PostureProc::doFunction()
       //g41 * deviceGravity3[0] + g42 * deviceGravity3[1] + g43 * deviceGravity3[2]);/// > bias;
 
   static bool prev = false;
-  bool isPostureCorrect = (-0.4 <= realBias && realBias <= 0.9);
+  bool isPostureCorrect = (realBias >= bias);//(-0.4 <= realBias && realBias <= 0.9);
   if (isFirstColibProc)
   {
     if (isPostureCorrect)
@@ -69,7 +69,6 @@ void mthl::PostureProc::doFunction()
   prev = isPostureCorrect;
 
   mthl::writeInt(&huart2, isPostureCorrect, "     ");
-/*
   mthl::writeFloat(&huart2, realBias, "     ");
   // 1
   mthl::writeFloat(&huart2, deviceAngles1[0], ";");
@@ -99,9 +98,113 @@ void mthl::PostureProc::doFunction()
   mthl::writeFloat(&huart2, deviceGravity3[2], ";");
 
   mthl::writeChar(&huart2, '\n');
+/*
 */
   HAL_Delay(20);
-} // End of 'mthl::PostureProc::doFunction' function
+} // End of 'mthl::PostureProcML::doFunction' function
+
+
+namespace
+{
+  /// Number of point == 5
+  // TODO
+  static const std::vector<float> dists = {/* TODO */};
+}
+/* Posture processing by approximation to function constructor */
+mthl::PostureProcASF::PostureProcASF(const std::vector<std::unique_ptr<IMU>> &IMUSensors)
+  : IMUSens(IMUSensors), SPFunc(dists)
+{
+} // End of 'mthl::PostureProcASF::PostureProcASF' constructor
+
+/* Doing posture processing function */
+void mthl::PostureProcASF::doFunction()
+{
+  if (!mthl::Controller::getInstance().isPostureOnGet())
+    return;
+  // take angles
+  auto deviceAngles1 = IMUSens[0]->getAbsAngles(),
+    deviceAngles2 = IMUSens[1]->getAbsAngles(),
+    deviceAngles3 = IMUSens[2]->getAbsAngles();
+
+  // update angles
+  // TODO: check axis of angles.
+  SPFunc.updateAngles({{deviceAngles1[1], deviceAngles1[1]},
+                       {deviceAngles1[1], deviceAngles2[1]},
+                       {deviceAngles2[1], deviceAngles2[1]},
+                       {deviceAngles2[1], deviceAngles3[1]},
+                       {deviceAngles3[1], deviceAngles3[1]}});
+
+  // get angle by distances of points on
+  struct angle
+  {
+    const std::array<float, 3> dists{};
+    const float minValue, maxValue;
+    bool check(float angle) const
+    {
+      return minValue <= angle && angle <= maxValue;
+    }
+  };
+
+  // TODO: add distances
+  static const angle angles[] =
+  {
+    {{14.5 + 9.5, 14.5 + 9.5 + 17.5, 14.5 + 9.5 + 17.5 + 18}, 139, 152}, // upper angle, C3-TH5-L3
+    {{0, 14.5, 14.5 + 9.5}, 137, 153}, // lower angle, TH5-L3-as
+  };
+
+  static bool prev = false;
+  bool isPostureCorrect = true;
+  float angleReal[2] = {SPFunc.getAngle(angles[0].dists), SPFunc.getAngle(angles[1].dists)};
+  isPostureCorrect &= angles[0].check(angleReal[0]);
+  isPostureCorrect &= angles[1].check(angleReal[0]);
+
+  if (isFirstColibProc)
+  {
+    if (isPostureCorrect)
+        mthl::writeWord(&huart6, " Good\n");
+    else
+      mthl::writeWord(&huart6, " Bad\n");
+
+    isFirstColibProc = false;
+  }
+  else if (isPostureCorrect != prev)
+  {
+    if (isPostureCorrect)
+      mthl::writeWord(&huart6, " Good\n");
+    else
+      mthl::writeWord(&huart6, " Bad\n");
+  }
+  prev = isPostureCorrect;
+
+  mthl::writeInt(&huart2, isPostureCorrect, "     ");
+
+  deviceAngles1 = IMUSens[0]->getAnglesOfDefl(),
+  deviceAngles2 = IMUSens[1]->getAnglesOfDefl(),
+  deviceAngles3 = IMUSens[2]->getAnglesOfDefl();
+
+
+  /*// 1
+  mthl::writeFloat(&huart2, deviceAngles1[0], ";");
+  mthl::writeFloat(&huart2, deviceAngles1[1], ";");
+  mthl::writeFloat(&huart2, deviceAngles1[2], ";");
+*/
+  // 2
+  mthl::writeFloat(&huart2, deviceAngles2[0], ";");
+  mthl::writeFloat(&huart2, deviceAngles2[1], ";");
+  mthl::writeFloat(&huart2, deviceAngles2[2], ";");
+  mthl::writeFloat(&huart2, deviceAngles2[3], ";");
+
+
+  /*// 3
+  mthl::writeFloat(&huart2, deviceAngles3[0], ";");
+  mthl::writeFloat(&huart2, deviceAngles3[1], ";");
+  mthl::writeFloat(&huart2, deviceAngles3[2], ";");
+*/
+  mthl::writeChar(&huart2, '\n');
+
+  HAL_Delay(100);
+} // End of 'mthl::PostureProcASF::doFunction' function
+
 
 
 
