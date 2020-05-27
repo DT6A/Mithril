@@ -6,7 +6,7 @@
  * Author      : Filippov Denis
  *               Tarasov Denis
  * Create date : 04.04.2020
- * Last change : 26.05.2020
+ * Last change : 27.05.2020
  ******************************/
 
 #ifndef __POSTURE_H_
@@ -51,10 +51,10 @@ namespace mthl
     const std::vector<std::unique_ptr<IMU>> &IMUSens; // reference on IMU-Sensors vector
 
     /** Ridge classifier coefficients **/
-    constexpr static float a11 = -0.6574127497827513, a12 = -0.12408078452489672,
-        a13 = -1.01366589356234, a21 = -0.0010099890420424112, a22 = -0.12721803608768048,
-        a23 = 1.4152481786114282, a41 = 0.29490051367205666, a42 = -0.5160584180339622,
-        a43 = 0.37768967134396847, bias = 0.7319738763099495;
+    constexpr static float a11 = -0.22837643649834735, a12 = 0.004623785286151828,
+        a13 = -0.250472523316491, a21 = 0.0006772766899397244, a22 = 0.006967943364773297,
+        a23 = 0.1497574860779648, a41 = 0.1617428204390021, a42 = -0.08251909275653284,
+        a43 = -0.0799760851616042977, bias = -0.5213019836385582;
   }; // End of 'PostureProcML' class declaration
 
 
@@ -82,9 +82,10 @@ namespace mthl
   private:
     const std::vector<std::unique_ptr<IMU>> &IMUSens; // reference on IMU-Sensors vector
 
+    /* Spine approximation function */
     struct spineApproxFunc final
     {
-      struct basePoint
+      struct basePoint final
       {
         float x = 0, y = 0;
       };

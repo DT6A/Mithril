@@ -6,7 +6,7 @@
  * Author      : Filippov Denis
  *               Tarasov Denis
  * Create date : 04.04.2020
- * Last change : 26.05.2020
+ * Last change : 27.05.2020
  ******************************/
 
 #include "stm32f4xx_hal.h"
@@ -49,7 +49,7 @@ void mthl::PostureProcML::doFunction()
       //g41 * deviceGravity3[0] + g42 * deviceGravity3[1] + g43 * deviceGravity3[2]);/// > bias;
 
   static bool prev = false;
-  bool isPostureCorrect = (realBias >= bias);//(-0.4 <= realBias && realBias <= 0.9);
+  bool isPostureCorrect = (-0.4 <= realBias && realBias <= 0.9);
   if (isFirstColibProc)
   {
     if (isPostureCorrect)
@@ -68,38 +68,6 @@ void mthl::PostureProcML::doFunction()
   }
   prev = isPostureCorrect;
 
-  mthl::writeInt(&huart2, isPostureCorrect, "     ");
-  mthl::writeFloat(&huart2, realBias, "     ");
-  // 1
-  mthl::writeFloat(&huart2, deviceAngles1[0], ";");
-  mthl::writeFloat(&huart2, deviceAngles1[1], ";");
-  mthl::writeFloat(&huart2, deviceAngles1[2], ";");
-
-  mthl::writeFloat(&huart2, deviceGravity1[0], ";");
-  mthl::writeFloat(&huart2, deviceGravity1[1], ";");
-  mthl::writeFloat(&huart2, deviceGravity1[2], ";");
-
-  // 2
-  mthl::writeFloat(&huart2, deviceAngles2[0], ";");
-  mthl::writeFloat(&huart2, deviceAngles2[1], ";");
-  mthl::writeFloat(&huart2, deviceAngles2[2], ";");
-
-  mthl::writeFloat(&huart2, deviceGravity2[0], ";");
-  mthl::writeFloat(&huart2, deviceGravity2[1], ";");
-  mthl::writeFloat(&huart2, deviceGravity2[2], ";");
-
-  // 3
-  mthl::writeFloat(&huart2, deviceAngles3[0], ";");
-  mthl::writeFloat(&huart2, deviceAngles3[1], ";");
-  mthl::writeFloat(&huart2, deviceAngles3[2], ";");
-
-  mthl::writeFloat(&huart2, deviceGravity3[0], ";");
-  mthl::writeFloat(&huart2, deviceGravity3[1], ";");
-  mthl::writeFloat(&huart2, deviceGravity3[2], ";");
-
-  mthl::writeChar(&huart2, '\n');
-/*
-*/
   HAL_Delay(20);
 } // End of 'mthl::PostureProcML::doFunction' function
 
@@ -107,7 +75,6 @@ void mthl::PostureProcML::doFunction()
 namespace
 {
   /// Number of point == 5
-  // TODO
   static const std::vector<float> dists = {16, 11, 17, 16, 0};
       //{14.5, 9.5, 17.5, 18, 0};
 }
@@ -133,7 +100,7 @@ void mthl::PostureProcASF::doFunction()
   deviceAngles3[0] = spineApproxFunc::PI / 2 - deviceAngles3[0];
 
   // update angles
-  // TODO: check axis of angles. Result -- we need axis
+  // TODO: check axis of angles. Result -- we need axis [0]
   SPFunc.updateAngles({{deviceAngles1[0], deviceAngles1[0]},
                        {deviceAngles1[0], deviceAngles2[0]},
                        {deviceAngles2[0], deviceAngles2[0]},
@@ -163,10 +130,8 @@ void mthl::PostureProcASF::doFunction()
   bool isPostureCorrect = true;
   float angleReal[2] = {SPFunc.getAngle(angles[0].dists), SPFunc.getAngle(angles[1].dists)};
   isPostureCorrect &= angles[0].check(angleReal[0]);
-  //isPostureCorrect &= angles[1].check(angleReal[1]);
+  isPostureCorrect &= angles[1].check(angleReal[1]);
 
-  mthl::writeFloat(&huart2, angleReal[0], ";");
-  mthl::writeFloat(&huart2, angleReal[1], ";           ");
   if (isFirstColibProc)
   {
     if (isPostureCorrect)
@@ -184,31 +149,6 @@ void mthl::PostureProcASF::doFunction()
       mthl::writeWord(&huart6, " Bad\n");
   }
   prev = isPostureCorrect;
-
-  mthl::writeInt(&huart2, isPostureCorrect, "     ");
-
-  // 1
-  mthl::writeFloat(&huart2, deviceAngles1[0], ";");
-  deviceAngles1 = IMUSens[0]->getAnglesOfDefl(),
-  mthl::writeFloat(&huart2, deviceAngles1[0], ";      ");
-  //mthl::writeFloat(&huart2, deviceAngles1[1], ";");
-  //mthl::writeFloat(&huart2, deviceAngles1[2], ";");
-  // 2
-  mthl::writeFloat(&huart2, deviceAngles2[0], ";");
-  deviceAngles2 = IMUSens[1]->getAnglesOfDefl(),
-  mthl::writeFloat(&huart2, deviceAngles2[0], ";     ");
-  //mthl::writeFloat(&huart2, deviceAngles2[1], ";");
-  //mthl::writeFloat(&huart2, deviceAngles2[2], ";");
-
-  // 3
-  mthl::writeFloat(&huart2, deviceAngles3[0], ";");
-  deviceAngles3 = IMUSens[2]->getAnglesOfDefl();
-  mthl::writeFloat(&huart2, deviceAngles3[0], ";");
-  //mthl::writeFloat(&huart2, deviceAngles3[1], ";");
-  //mthl::writeFloat(&huart2, deviceAngles3[2], ";");
-/*
-*/
-  mthl::writeChar(&huart2, '\n');
 
   HAL_Delay(100);
 } // End of 'mthl::PostureProcASF::doFunction' function
