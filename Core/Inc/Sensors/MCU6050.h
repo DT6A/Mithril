@@ -3,8 +3,9 @@
  * Purpose     : Mithrill project.
  *               MCU6050 sensor
  * Author      : Tarasov Denis
+ *               Filippov Denis
  * Create date : 02.03.2020
- * Last change : 13.05.2020
+ * Last change : 26.05.2020
  ******************************/
 
 #ifndef __MCU6050_H_
@@ -61,7 +62,7 @@ namespace mthl
      */
     void calibrate(int32_t iterations) override;
 
-    /* Evaluate angles
+    /* Evaluate angles of deflection.
      *
      * Arguments:
      *   None.
@@ -69,7 +70,17 @@ namespace mthl
      * Returns:
      *   Filtered angles
      */
-    math::quater<float> getAngles() override;
+    math::quater<float> getAnglesOfDefl() override;
+
+    /* Evaluate absolute angles.
+     *
+     * Arguments:
+     *   None.
+     *
+     * Returns:
+     *   Filtered angles
+     */
+    math::quater<float> getAbsAngles() override;
 
     static constexpr const uint8_t MPU6050_ADDR_1 = 0xD0,  // Device register on 5v
                       MPU6050_ADDR_2 = 0xD2;  // Device register on 3.3v

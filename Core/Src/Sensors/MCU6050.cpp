@@ -3,8 +3,9 @@
  * Purpose     : Mithrill project.
  *               MCU6050 sensor
  * Author      : Tarasov Denis
+ *               Filippov Denis
  * Create date : 02.03.2020
- * Last change : 15.05.2020
+ * Last change : 26.05.2020
  ******************************/
 
 #include <stdexcept>
@@ -81,17 +82,22 @@ void mthl::MCU6050::readGyro(math::quater<float> &v)
   v -= calibratedGyro;
 } // End of 'readGyro' function
 
-/* Evaluate filtered angles */
-mthl::math::quater<float> mthl::MCU6050::getAngles()
+/* Evaluate angles of deflection */
+mthl::math::quater<float> mthl::MCU6050::getAnglesOfDefl()
+{
+  return getAbsAngles() - calibratedAngles;
+} // End of 'getAnglesOfDefl' function
+
+/* Evaluate absolute angles */
+mthl::math::quater<float> mthl::MCU6050::getAbsAngles()
 {
   mthl::math::quater<float> gyro, accel;
 
   readGyro(gyro);
   readAccel(accel);
 
-  angles = mthl::filters::complementary(angles, gyro, accel, 0.04, 0.2);
-  return angles - calibratedAngles;
-}
+  return angles = mthl::filters::complementary(angles, gyro, accel, 0.04, 0.2);
+} // End of 'getAbsAngles' function
 
 /* Calibrate device */
 void mthl::MCU6050::calibrate(int32_t iterations)
