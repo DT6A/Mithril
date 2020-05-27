@@ -108,7 +108,8 @@ namespace
 {
   /// Number of point == 5
   // TODO
-  static const std::vector<float> dists = {/* TODO */};
+  static const std::vector<float> dists = {16, 11, 17, 16, 0};
+      //{14.5, 9.5, 17.5, 18, 0};
 }
 /* Posture processing by approximation to function constructor */
 mthl::PostureProcASF::PostureProcASF(const std::vector<std::unique_ptr<IMU>> &IMUSensors)
@@ -126,13 +127,18 @@ void mthl::PostureProcASF::doFunction()
     deviceAngles2 = IMUSens[1]->getAbsAngles(),
     deviceAngles3 = IMUSens[2]->getAbsAngles();
 
+  // Correction of angles
+  deviceAngles1[0] += spineApproxFunc::PI / 2;
+  deviceAngles2[0] += spineApproxFunc::PI / 2;
+  deviceAngles3[0] = spineApproxFunc::PI / 2 - deviceAngles3[0];
+
   // update angles
-  // TODO: check axis of angles.
-  SPFunc.updateAngles({{deviceAngles1[1], deviceAngles1[1]},
-                       {deviceAngles1[1], deviceAngles2[1]},
-                       {deviceAngles2[1], deviceAngles2[1]},
-                       {deviceAngles2[1], deviceAngles3[1]},
-                       {deviceAngles3[1], deviceAngles3[1]}});
+  // TODO: check axis of angles. Result -- we need axis
+  SPFunc.updateAngles({{deviceAngles1[0], deviceAngles1[0]},
+                       {deviceAngles1[0], deviceAngles2[0]},
+                       {deviceAngles2[0], deviceAngles2[0]},
+                       {deviceAngles2[0], deviceAngles3[0]},
+                       {deviceAngles3[0], deviceAngles3[0]}});
 
   // get angle by distances of points on
   struct angle
@@ -148,16 +154,19 @@ void mthl::PostureProcASF::doFunction()
   // TODO: add distances
   static const angle angles[] =
   {
-    {{14.5 + 9.5, 14.5 + 9.5 + 17.5, 14.5 + 9.5 + 17.5 + 18}, 139, 152}, // upper angle, C3-TH5-L3
-    {{0, 14.5, 14.5 + 9.5}, 137, 153}, // lower angle, TH5-L3-as
+    {{dists[0] + dists[1], dists[0] + dists[1] + dists[2],
+      dists[0] + dists[1] + dists[2] + dists[3]}, 139, 152}, // upper angle, C3-TH5-L3
+    {{0, dists[0], dists[0] + dists[1]}, 137, 153}, // lower angle, TH5-L3-as
   };
 
   static bool prev = false;
   bool isPostureCorrect = true;
   float angleReal[2] = {SPFunc.getAngle(angles[0].dists), SPFunc.getAngle(angles[1].dists)};
   isPostureCorrect &= angles[0].check(angleReal[0]);
-  isPostureCorrect &= angles[1].check(angleReal[0]);
+  //isPostureCorrect &= angles[1].check(angleReal[1]);
 
+  mthl::writeFloat(&huart2, angleReal[0], ";");
+  mthl::writeFloat(&huart2, angleReal[1], ";           ");
   if (isFirstColibProc)
   {
     if (isPostureCorrect)
@@ -178,27 +187,26 @@ void mthl::PostureProcASF::doFunction()
 
   mthl::writeInt(&huart2, isPostureCorrect, "     ");
 
-  deviceAngles1 = IMUSens[0]->getAnglesOfDefl(),
-  deviceAngles2 = IMUSens[1]->getAnglesOfDefl(),
-  deviceAngles3 = IMUSens[2]->getAnglesOfDefl();
-
-
-  /*// 1
+  // 1
   mthl::writeFloat(&huart2, deviceAngles1[0], ";");
-  mthl::writeFloat(&huart2, deviceAngles1[1], ";");
-  mthl::writeFloat(&huart2, deviceAngles1[2], ";");
-*/
+  deviceAngles1 = IMUSens[0]->getAnglesOfDefl(),
+  mthl::writeFloat(&huart2, deviceAngles1[0], ";      ");
+  //mthl::writeFloat(&huart2, deviceAngles1[1], ";");
+  //mthl::writeFloat(&huart2, deviceAngles1[2], ";");
   // 2
   mthl::writeFloat(&huart2, deviceAngles2[0], ";");
-  mthl::writeFloat(&huart2, deviceAngles2[1], ";");
-  mthl::writeFloat(&huart2, deviceAngles2[2], ";");
-  mthl::writeFloat(&huart2, deviceAngles2[3], ";");
+  deviceAngles2 = IMUSens[1]->getAnglesOfDefl(),
+  mthl::writeFloat(&huart2, deviceAngles2[0], ";     ");
+  //mthl::writeFloat(&huart2, deviceAngles2[1], ";");
+  //mthl::writeFloat(&huart2, deviceAngles2[2], ";");
 
-
-  /*// 3
+  // 3
   mthl::writeFloat(&huart2, deviceAngles3[0], ";");
-  mthl::writeFloat(&huart2, deviceAngles3[1], ";");
-  mthl::writeFloat(&huart2, deviceAngles3[2], ";");
+  deviceAngles3 = IMUSens[2]->getAnglesOfDefl();
+  mthl::writeFloat(&huart2, deviceAngles3[0], ";");
+  //mthl::writeFloat(&huart2, deviceAngles3[1], ";");
+  //mthl::writeFloat(&huart2, deviceAngles3[2], ";");
+/*
 */
   mthl::writeChar(&huart2, '\n');
 

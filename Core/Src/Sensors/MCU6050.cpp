@@ -96,7 +96,7 @@ mthl::math::quater<float> mthl::MCU6050::getAbsAngles()
   readGyro(gyro);
   readAccel(accel);
 
-  return mthl::filters::complementary(angles, gyro, accel, 0.04, 0.2);
+  return angles = mthl::filters::complementary(angles, gyro, accel, 0.04, 0.2);
 } // End of 'getAbsAngles' function
 
 /* Calibrate device */
